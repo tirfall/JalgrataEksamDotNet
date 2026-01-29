@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="360" viewBox="0 0 900 360">
+  <style>
+    .box { fill: #f4f7fb; stroke: #3b4a6b; stroke-width: 2; rx: 10; }
+    .title { font: 16px sans-serif; fill: #1f2a44; font-weight: 600; }
+    .label { font: 14px sans-serif; fill: #1f2a44; }
+    .arrow { stroke: #3b4a6b; stroke-width: 2; marker-end: url(#arrow); }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L10,3 L0,6 Z" fill="#3b4a6b" />
+    </marker>
+  </defs>
+
+  <text x="24" y="28" class="title">Этапы создания проекта</text>
+
+  <rect x="30" y="60" width="250" height="70" class="box" />
+  <text x="50" y="90" class="label">1. Анализ требований</text>
+  <text x="50" y="110" class="label">(роли, функции, API)</text>
+
+  <rect x="320" y="60" width="250" height="70" class="box" />
+  <text x="340" y="90" class="label">2. Настройка ASP.NET Core</text>
+  <text x="340" y="110" class="label">(MVC + API)</text>
+
+  <rect x="610" y="60" width="250" height="70" class="box" />
+  <text x="630" y="90" class="label">3. База данных</text>
+  <text x="630" y="110" class="label">(SQLite + seed из XML)</text>
+
+  <rect x="30" y="190" width="250" height="70" class="box" />
+  <text x="50" y="220" class="label">4. UI таблицы</text>
+  <text x="50" y="240" class="label">(фильтр, сортировка)</text>
+
+  <rect x="320" y="190" width="250" height="70" class="box" />
+  <text x="340" y="220" class="label">5. Админ режим</text>
+  <text x="340" y="240" class="label">(добавление, удаление)</text>
+
+  <rect x="610" y="190" width="250" height="70" class="box" />
+  <text x="630" y="220" class="label">6. Swagger + документация</text>
+  <text x="630" y="240" class="label">(проверка API)</text>
+
+  <line x1="280" y1="95" x2="320" y2="95" class="arrow" />
+  <line x1="570" y1="95" x2="610" y2="95" class="arrow" />
+  <line x1="735" y1="130" x2="155" y2="190" class="arrow" />
+  <line x1="280" y1="225" x2="320" y2="225" class="arrow" />
+  <line x1="570" y1="225" x2="610" y2="225" class="arrow" />
+</svg>

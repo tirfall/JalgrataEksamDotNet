@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // MVC + API.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // SQLite database connection.
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -27,6 +29,11 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+}
+else
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

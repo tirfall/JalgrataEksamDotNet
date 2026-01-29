@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="360" viewBox="0 0 900 360">
+  <style>
+    .box { fill: #f9f6f2; stroke: #6b4a3b; stroke-width: 2; rx: 10; }
+    .title { font: 16px sans-serif; fill: #3b2a1f; font-weight: 600; }
+    .label { font: 14px sans-serif; fill: #3b2a1f; }
+  </style>
+
+  <text x="24" y="28" class="title">Роли в системе</text>
+
+  <rect x="40" y="60" width="380" height="250" class="box" />
+  <text x="60" y="90" class="title">Пользователь (просмотр)</text>
+  <text x="60" y="120" class="label">• Просмотр таблицы экзаменов</text>
+  <text x="60" y="145" class="label">• Фильтр по имени/дате</text>
+  <text x="60" y="170" class="label">• Сортировка по колонкам</text>
+  <text x="60" y="195" class="label">• Экспорт JSON</text>
+
+  <rect x="480" y="60" width="380" height="250" class="box" />
+  <text x="500" y="90" class="title">Администратор</text>
+  <text x="500" y="120" class="label">• Включение админ режима</text>
+  <text x="500" y="145" class="label">• Добавление экзамена</text>
+  <text x="500" y="170" class="label">• Удаление экзамена</text>
+  <text x="500" y="195" class="label">• Доступ к профилю админа</text>
+</svg>

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="320" viewBox="0 0 900 320">
+  <style>
+    .box { fill: #eef7f1; stroke: #2d6b4b; stroke-width: 2; rx: 10; }
+    .title { font: 16px sans-serif; fill: #1f3b2a; font-weight: 600; }
+    .label { font: 14px sans-serif; fill: #1f3b2a; }
+    .arrow { stroke: #2d6b4b; stroke-width: 2; marker-end: url(#arrow); }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L10,3 L0,6 Z" fill="#2d6b4b" />
+    </marker>
+  </defs>
+
+  <text x="24" y="28" class="title">Основные API запросы</text>
+
+  <rect x="40" y="60" width="260" height="70" class="box" />
+  <text x="60" y="90" class="label">GET /api/exams</text>
+  <text x="60" y="110" class="label">Фильтр/сортировка</text>
+
+  <rect x="320" y="60" width="260" height="70" class="box" />
+  <text x="340" y="90" class="label">GET /api/exams/export-json</text>
+  <text x="340" y="110" class="label">Экспорт JSON</text>
+
+  <rect x="600" y="60" width="260" height="70" class="box" />
+  <text x="620" y="90" class="label">POST /api/exams</text>
+  <text x="620" y="110" class="label">Добавить (admin)</text>
+
+  <rect x="320" y="190" width="260" height="70" class="box" />
+  <text x="340" y="220" class="label">DELETE /api/exams/{id}</text>
+  <text x="340" y="240" class="label">Удалить (admin)</text>
+
+  <line x1="300" y1="95" x2="320" y2="95" class="arrow" />
+  <line x1="580" y1="95" x2="600" y2="95" class="arrow" />
+  <line x1="730" y1="130" x2="450" y2="190" class="arrow" />
+</svg>
