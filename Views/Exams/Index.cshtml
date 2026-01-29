@@ -1,0 +1,257 @@
+@{
+    ViewData["Title"] = "Exam detailid";
+}
+
+<h1 id="page-title">Exam detailid</h1>
+
+<form id="filter-form" method="get">
+    <div>
+        <label for="name">Otsi nime järgi:</label>
+        <input type="text" id="name" name="name" placeholder="Sisestage nimi...">
+        <button type="submit">Otsi</button>
+    </div>
+    <div style="margin-top: 1%">
+        <label for="date">Filtreeri kuupäeva järgi:</label>
+        <input type="text" id="date" name="date" placeholder="Valige kuupäev (yyyy-mm-dd)">
+        <button type="submit">Otsi</button>
+    </div>
+    <input type="hidden" id="sort" name="sort" value="id">
+    <input type="hidden" id="order" name="order" value="asc">
+</form>
+
+<div class="button-row">
+    <a class="export-button" href="/api/exams/export-json">Export to JSON</a>
+    @if (ViewBag.IsAdmin == true)
+    {
+        <a class="export-button" href="/Exams/Profile">Admin profiil</a>
+    }
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th><a href="#" data-sort="id">ID</a></th>
+            <th><a href="#" data-sort="eksamiaeg">Exam aeg</a></th>
+            <th><a href="#" data-sort="koht">Koht</a></th>
+            <th><a href="#" data-sort="eksamineerijanimi">Eksamineerija nimi</a></th>
+            <th><a href="#" data-sort="opilanenimi">Opilane nimi</a></th>
+            <th><a href="#" data-sort="kestvus">Kestvus (tunnid)</a></th>
+            <th><a href="#" data-sort="email">Email</a></th>
+            @if (ViewBag.IsAdmin == true)
+            {
+                <th>Admin</th>
+            }
+        </tr>
+    </thead>
+    <tbody id="exam-table-body"></tbody>
+</table>
+
+<p id="no-results" style="display:none;">Tulemusi ei leitud.</p>
+
+@if (ViewBag.IsAdmin == true)
+{
+    <section class="admin-panel">
+        <h2>Admin: lisa uus eksam</h2>
+        <form id="admin-add-form">
+            <div class="admin-grid">
+                <input type="number" name="id" placeholder="ID" required>
+                <input type="text" name="examDate" placeholder="Eksami aeg (yyyy-mm-dd hh:mm)" required>
+                <input type="text" name="location" placeholder="Koht" required>
+                <input type="text" name="examinerName" placeholder="Eksamineerija nimi" required>
+                <input type="text" name="studentName" placeholder="Õpilase nimi" required>
+                <input type="number" name="durationHours" placeholder="Kestvus" required>
+                <input type="email" name="email" placeholder="Email" required>
+            </div>
+            <button type="submit">Lisa eksam</button>
+        </form>
+        <p id="admin-message" class="message"></p>
+    </section>
+}
+
+@section Scripts {
+    <script>
+        // Loeme olemasolevad query parameetrid, et taastada filter/sort.
+        const params = new URLSearchParams(window.location.search);
+        const nameInput = document.getElementById('name');
+        const dateInput = document.getElementById('date');
+        const sortInput = document.getElementById('sort');
+        const orderInput = document.getElementById('order');
+        const tableBody = document.getElementById('exam-table-body');
+        const noResults = document.getElementById('no-results');
+        const isAdmin = @((ViewBag.IsAdmin == true).ToString().ToLowerInvariant());
+
+        // Täidame vormi väärtused URL-ist.
+        function updateFormFromParams() {
+            nameInput.value = params.get('name') || '';
+            dateInput.value = params.get('date') || '';
+            sortInput.value = params.get('sort') || 'id';
+            orderInput.value = params.get('order') || 'asc';
+        }
+
+        // Koostame API URL-i vastavalt filtreerimisele ja sortimisele.
+        function buildApiUrl() {
+            const apiParams = new URLSearchParams();
+            apiParams.set('name', nameInput.value);
+            apiParams.set('date', dateInput.value);
+            apiParams.set('sort', sortInput.value);
+            apiParams.set('order', orderInput.value);
+            return `/api/exams?${apiParams.toString()}`;
+        }
+
+        // Renderdame API-st saadud read tabelisse.
+        function renderTable(rows) {
+            tableBody.innerHTML = '';
+            if (!rows.length) {
+                noResults.style.display = 'block';
+                return;
+            }
+
+            noResults.style.display = 'none';
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.id}</td>
+                    <td>${row.examDate}</td>
+                    <td>${row.location}</td>
+                    <td>${row.examinerName}</td>
+                    <td>${row.studentName}</td>
+                    <td>${row.durationHours}</td>
+                    <td>${row.email}</td>
+                `;
+                if (isAdmin) {
+                    const adminCell = document.createElement('td');
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Kustuta';
+                    deleteButton.addEventListener('click', async () => {
+                        await deleteExam(row.id);
+                    });
+                    adminCell.appendChild(deleteButton);
+                    tr.appendChild(adminCell);
+                }
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // Kutsume API-t ja uuendame tabeli.
+        async function fetchTable() {
+            const response = await fetch(buildApiUrl());
+            if (!response.ok) {
+                noResults.style.display = 'block';
+                noResults.textContent = 'API päring ebaõnnestus.';
+                return;
+            }
+            const data = await response.json();
+            renderTable(data.data || []);
+        }
+
+        // Sortimise lingid: vahetame sort/order ja laadime uuesti.
+        document.querySelectorAll('th a[data-sort]').forEach(link => {
+            link.addEventListener('click', event => {
+                event.preventDefault();
+                const selectedSort = link.getAttribute('data-sort');
+                const currentSort = sortInput.value;
+                const currentOrder = orderInput.value;
+                if (selectedSort === currentSort) {
+                    orderInput.value = currentOrder === 'asc' ? 'desc' : 'asc';
+                } else {
+                    sortInput.value = selectedSort;
+                    orderInput.value = 'asc';
+                }
+                params.set('sort', sortInput.value);
+                params.set('order', orderInput.value);
+                params.set('name', nameInput.value);
+                params.set('date', dateInput.value);
+                window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+                fetchTable();
+            });
+        });
+
+        // Filtri submit teeb API päringu ja uuendab URL-i.
+        document.getElementById('filter-form').addEventListener('submit', event => {
+            event.preventDefault();
+            params.set('name', nameInput.value);
+            params.set('date', dateInput.value);
+            params.set('sort', sortInput.value);
+            params.set('order', orderInput.value);
+            window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+            fetchTable();
+        });
+
+        // Esmane renderdus.
+        updateFormFromParams();
+        fetchTable();
+
+        // Kolm klikki pealkirjal avab admin parooli küsimise.
+        let clickCount = 0;
+        const title = document.getElementById('page-title');
+        if (title) {
+            title.addEventListener('click', async () => {
+                clickCount += 1;
+                if (clickCount === 3) {
+                    clickCount = 0;
+                    const input = prompt('Sisesta admin parool:');
+                    if (input === null) {
+                        return;
+                    }
+                    // Lihtne "krüpto": salvestame 1234 kui 2345 ja teeme dekodeerimise kliendis.
+                    const encrypted = '2345';
+                    const decrypted = encrypted.split('').map(ch => String.fromCharCode(ch.charCodeAt(0) - 1)).join('');
+                    if (input !== decrypted) {
+                        alert('Vale parool.');
+                        return;
+                    }
+
+                    const response = await fetch('/Exams/EnableAdmin', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ password: input })
+                    });
+                    if (response.ok) {
+                        window.location.href = '/Exams/Profile';
+                    } else {
+                        alert('Admin sisselogimine ebaõnnestus.');
+                    }
+                }
+                setTimeout(() => {
+                    clickCount = 0;
+                }, 800);
+            });
+        }
+
+        async function deleteExam(id) {
+            const response = await fetch(`/api/exams/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                fetchTable();
+            }
+        }
+
+        const adminForm = document.getElementById('admin-add-form');
+        const adminMessage = document.getElementById('admin-message');
+        if (adminForm) {
+            adminForm.addEventListener('submit', async event => {
+                event.preventDefault();
+                adminMessage.textContent = '';
+                const formData = new FormData(adminForm);
+                const payload = Object.fromEntries(formData.entries());
+                payload.id = Number(payload.id);
+                payload.durationHours = Number(payload.durationHours);
+
+                const response = await fetch('/api/exams', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    adminMessage.style.color = 'red';
+                    adminMessage.textContent = data.error || 'Viga eksami lisamisel.';
+                    return;
+                }
+                adminMessage.style.color = 'green';
+                adminMessage.textContent = data.message || 'Eksam lisatud.';
+                adminForm.reset();
+                fetchTable();
+            });
+        }
+    </script>
+}

@@ -1,0 +1,26 @@
+@{
+    ViewData["Title"] = "Admin profiil";
+}
+
+<h1>Admin profiil</h1>
+
+<p class="helper-text">Admin režiim on aktiveeritud. Nüüd saad lisada ja kustutada eksameid.</p>
+
+<div class="button-row">
+    <a class="export-button" href="/Exams/Index">Tagasi tabelisse</a>
+    <button class="back-button" id="disable-admin">Logi välja administ</button>
+</div>
+
+@section Scripts {
+<script>
+    const disableButton = document.getElementById('disable-admin');
+    if (disableButton) {
+        disableButton.addEventListener('click', async () => {
+            const response = await fetch('/Exams/DisableAdmin', { method: 'POST' });
+            if (response.ok) {
+                window.location.href = '/Exams/Index';
+            }
+        });
+    }
+</script>
+}
